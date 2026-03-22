@@ -40,7 +40,7 @@ class LLMProxy:
             response = await self._client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "system", "content": system_prompt}] + messages,
-                max_tokens=500,
+                max_completion_tokens=500,
                 temperature=0.8,
             )
             return response.choices[0].message.content or ""
@@ -75,7 +75,7 @@ class LLMProxy:
             stream = await self._client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "system", "content": system_prompt}] + messages,
-                max_tokens=500,
+                max_completion_tokens=500,
                 temperature=0.8,
                 stream=True,
             )
