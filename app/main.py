@@ -82,18 +82,30 @@ async def lifespan(app: FastAPI):
     logger.info("ORION CLONE SERVER — Iniciando...")
     logger.info("=" * 60)
 
-    # Cargar modelos en orden
+    # Cargar modelos en orden (tolerante a fallos)
     logger.info("[1/4] Cargando Whisper STT...")
-    stt.load()
+    try:
+        stt.load()
+    except Exception as e:
+        logger.error(f"Error cargando Whisper: {e}")
 
     logger.info("[2/4] Cargando XTTS v2...")
-    tts.load()
+    try:
+        tts.load()
+    except Exception as e:
+        logger.error(f"Error cargando XTTS: {e}")
 
     logger.info("[3/4] Cargando Wav2Lip...")
-    lipsync.load()
+    try:
+        lipsync.load()
+    except Exception as e:
+        logger.error(f"Error cargando Wav2Lip: {e}")
 
     logger.info("[4/4] Inicializando LLM proxy...")
-    llm.load()
+    try:
+        llm.load()
+    except Exception as e:
+        logger.error(f"Error cargando LLM: {e}")
 
     # Inyectar dependencias en routers
     setup_router.init_router(tts, lipsync, config.storage_path)
