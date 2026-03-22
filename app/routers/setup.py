@@ -92,6 +92,56 @@ async def upload_voice_sample(
         raise HTTPException(500, f"Error procesando audio: {str(e)}")
 
 
+@router.post("/video", response_model=SetupResponse)
+async def upload_face_video(
+    user_id: str = Form(...),
+    video_file: UploadFile = File(...),
+):
+    """
+    Sube video del rostro (5-10s) para animación con video loop + lip-sync.
+    Acepta MP4, WEBM, o MOV.
+    """
+    if _lipsync is None:
+        raise HTTPException(500, "Lip-sync no inicializado")
+
+    user_dir = Path(_storage_path) / user_id
+    user_dir.mkdir(parents=True, exist_ok=True)
+
+    ext = ".mp4"
+    if video_file.content_type:
+        if "webm" in video_file.content_type:
+            ext = ".webm"
+        elif "mov" in video_file.content_type or "quicktime" in video_file.content_type:
+            ext = ".mov"
+
+    video_path = user_dir / f"face_video{ext}"
+    try:
+        with open(video_path, "wb") as f:
+            content = await video_file.read()
+            f.write(content)
+
+        logger.info(f"Video recibido: {user_id}, {len(content)} bytes")
+
+        success = _lipsync.preprocess_video(user_id, str(video_path))
+
+        if success:
+            return SetupResponse(
+                status="ok",
+                user_id=user_id,
+                message="Video procesado exitosamente"
+            )
+        else:
+            return SetupResponse(
+                status="warning",
+                user_id=user_id,
+                message="No se detectó rostro en el video. Intenta de nuevo mirando a cámara."
+            )
+
+    except Exception as e:
+        logger.error(f"Error procesando video de {user_id}: {e}")
+        raise HTTPException(500, f"Error procesando video: {str(e)}")
+
+
 @router.post("/face", response_model=SetupResponse)
 async def upload_face_photo(
     user_id: str = Form(...),
