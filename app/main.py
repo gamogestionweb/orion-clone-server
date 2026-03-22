@@ -51,7 +51,7 @@ config = ServerConfig.from_env()
 
 stt = WhisperSTT(
     model_size=config.whisper_model,
-    device=config.whisper_device,
+    device=config.device,
     compute_type=config.whisper_compute_type,
 )
 
