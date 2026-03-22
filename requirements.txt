@@ -1,0 +1,28 @@
+# FastAPI + Server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+websockets>=12.0
+python-multipart>=0.0.6
+
+# AI Models
+faster-whisper>=0.10.0
+TTS>=0.22.0
+torch>=2.1.0
+torchaudio>=2.1.0
+
+# Audio/Image Processing
+numpy>=1.24.0
+opencv-python-headless>=4.8.0
+Pillow>=10.0.0
+librosa>=0.10.0
+soundfile>=0.12.0
+
+# VAD
+silero-vad>=4.0
+
+# LLM Proxies
+openai>=1.0.0
+anthropic>=0.20.0
+
+# Utilities
+aiofiles>=23.0.0

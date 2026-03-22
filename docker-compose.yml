@@ -1,0 +1,37 @@
+# ===========================================
+# Docker Compose — Para desarrollo local con GPU
+# Para RunPod: usar el Dockerfile directamente
+# ===========================================
+
+services:
+  orion-clone:
+    build: .
+    container_name: orion-clone-server
+    ports:
+      - "8765:8765"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - ./storage:/app/storage
+      - ./models:/app/models
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8765
+      - WHISPER_MODEL=${WHISPER_MODEL:-medium}
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4o-mini}
+      - STORAGE_PATH=./storage
+      - MAX_USERS=${MAX_USERS:-5}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8765/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 180s  # Los modelos tardan en cargar
