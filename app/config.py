@@ -45,7 +45,7 @@ class ServerConfig:
     # LLM Proxy
     llm_provider: str = "openai"      # "openai" | "anthropic"
     llm_api_key: str = ""
-    llm_model: str = "gpt-4o-mini"
+    llm_model: str = "gpt-5.4-nano-2026-03-17"
 
     # Storage
     storage_path: str = "./storage"
